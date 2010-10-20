@@ -31,14 +31,14 @@ buffer_t* buffer_create(pool_t* pool) {
 	buffer->data = (uint8_t*)pool_allocate(buffer->pool, BUFFER_SIZE);
 	memset(buffer->data, 0, BUFFER_SIZE);
 	buffer->length = BUFFER_SIZE;
-	buffer->index = 0;
+	buffer->position = 0;
 
 	return buffer;
 }
 
 void buffer_clear(buffer_t* buffer) {
-	buffer->index = 0;
-	buffer->data[buffer->index] = 0;
+	buffer->position = 0;
+	buffer->data[buffer->position] = 0;
 }
 
 void buffer_delete(buffer_t* buffer) {
@@ -51,9 +51,9 @@ int buffer_grow(buffer_t* buffer) {
 	
 	buffer->length += BUFFER_SIZE;
 
-	memset(buffer->data + buffer->index, 0, buffer->length - buffer->index);
+	memset(buffer->data + buffer->position, 0, buffer->length - buffer->position);
 
-	return buffer->length - buffer->index;
+	return buffer->length - buffer->position;
 }
 
 void buffer_set_position(buffer_t* buffer, uint32_t position) {
@@ -61,34 +61,56 @@ void buffer_set_position(buffer_t* buffer, uint32_t position) {
 		buffer_grow(buffer);
 	}
 
-	buffer->index = position;
+	buffer->position = position;
 }
 
-void buffer_appendn(buffer_t* buffer, const uint8_t* value, size_t length) {
-	while((buffer->length - buffer->index) < length + 1) {
+void buffer_writen(buffer_t* buffer, const uint8_t* value, size_t length) {
+	while((buffer->length - buffer->position) < length + 1) {
 		buffer_grow(buffer);
 	}
 
-	memcpy(buffer->data + buffer->index, value, length);
+	memcpy(buffer->data + buffer->position, value, length);
 	
-	buffer->index += length;
+	buffer->position += length;
 }
 
-void buffer_append(buffer_t* buffer, uint8_t byte) {
-	if((buffer->length - buffer->index) < 2) {
+void buffer_write(buffer_t* buffer, uint8_t byte) {
+	if((buffer->length - buffer->position) < 2) {
 		buffer_grow(buffer);
 	}
 
-	buffer->data[buffer->index++] = byte;
+	buffer->data[buffer->position++] = byte;
 }
 
-void buffer_append_int32(buffer_t* buffer, int32_t value) {
+void buffer_write_int32(buffer_t* buffer, int32_t value) {
 	int32_u u;
 
 	u.value = value;
 
 	for(int i = 0; i < 4; i ++) {
-		buffer_append(buffer, u.bytes[i]);
+		buffer_write(buffer, u.bytes[i]);
 	}
+}
+
+uint8_t buffer_read_uint8(buffer_t* buffer) {
+	if((buffer->length - buffer->position) > 1) {
+		return buffer->data[buffer->position++];
+	}
+
+	// throw exception
+}
+
+uint16_t buffer_read_uint16(buffer_t* buffer) {
+	if((buffer->length - buffer->position) > 2) {
+		uint16_u u;
+
+		for(int i = 0; i < 2; i ++) {
+			u.bytes[i] = buffer->data[buffer->position++];
+		}
+
+		return u.value;
+	}
+
+	// throw exception
 }
 

@@ -34,6 +34,21 @@ typedef union _int64_u {
 	int64_t value;
 } int64_u;
 
+typedef union _uint16_u {
+	int8_t bytes[2];
+	uint16_t value;
+} uint16_u;
+
+typedef union _uint32_u {
+	int8_t bytes[4];
+	uint32_t value;
+} uint32_u;
+
+typedef union _uint64_u {
+	int8_t bytes[8];
+	uint64_t value;
+} uint64_u;
+
 typedef union _double_u {
 	int8_t bytes[8];
 	double value;

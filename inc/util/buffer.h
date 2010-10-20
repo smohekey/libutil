@@ -26,16 +26,18 @@ typedef struct _buffer_s {
 	pool_t* pool;
 	uint8_t* data;
 	size_t length;
-	size_t index;
+	size_t position;
 } buffer_t;
 
 extern buffer_t* buffer_create(pool_t* pool);
 extern void buffer_delete(buffer_t* buffer);
 extern void buffer_clear(buffer_t* buffer);
 extern int buffer_grow(buffer_t* buffer);
-extern void buffer_append(buffer_t* buffer, uint8_t value);
-extern void buffer_appendn(buffer_t* buffer, const uint8_t* value, size_t length);
-extern void buffer_append_int32(buffer_t* buffer, int32_t value);
+extern void buffer_write(buffer_t* buffer, uint8_t value);
+extern void buffer_writen(buffer_t* buffer, const uint8_t* value, size_t length);
+extern void buffer_write_int32(buffer_t* buffer, int32_t value);
 extern void buffer_set_position(buffer_t* buffer, uint32_t position);
+extern uint8_t buffer_read_uint8(buffer_t* buffer);
+extern uint16_t buffer_read_uint16(buffer_t* buffer);
 
 #endif
