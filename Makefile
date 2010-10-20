@@ -46,9 +46,12 @@ endif
 %.o: %.d %.c
 
 LIBS := libutil.so
+ARCS := libutil.a
 EXES := test
 
 libutil_so_OBJS := $(OBJS)
+
+libutil_a_OBJS := $(OBJS)
 
 test_OBJS := $(OBJS) src/test-main.o
 
